@@ -1,0 +1,14 @@
+dist/
+logs
+*.log
+npm-debug.log*
+node_modules/
+.idea/
+.npm
+.eslintcache
+.DS_Store
+build/
+.env
+.vscode/
+.swc/
+dist/
