@@ -50,7 +50,7 @@ export class ChildEdge extends BuilderEdge<ChildEdgeMetadata> {
     return `${source}:${BuilderEdgeTypes.CHILD}:${target}`;
   }
 
-  static create(source: string, target: string, builder?: AudienceBuilder): ChildEdge {
+  static create(source: string, target: string, builder?: IBuilder): ChildEdge {
     const id = ChildEdge.createEdgeId(source, target);
 
     const edge = new ChildEdge({builder, id, source, target});

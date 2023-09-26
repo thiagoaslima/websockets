@@ -1,5 +1,5 @@
-import {IBuilderQueryCtx} from '@v2/types/builder';
-import {Nullable} from '../../general';
+import {IBuilderQueryCtx} from '../builder.js';
+import {Nullable} from '../utilities.js';
 
 export interface IAudienceBuilderNode {
   isValid(): boolean;

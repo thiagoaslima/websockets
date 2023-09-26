@@ -1,5 +1,5 @@
-import {IChannel, IChannelMessage} from '@v2/lib/channel';
-import {Result} from '@v2/lib/result';
+import {IChannel, IChannelMessage} from '../lib/channel.js';
+import {Result} from '../lib/result.js';
 
 export type BuilderQuerySelector<T> =
   | Iterable<string>
