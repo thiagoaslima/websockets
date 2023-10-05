@@ -56,7 +56,8 @@ export enum StemUpdateContexts {
  */
 export class StemNode<T extends StemMetadata = StemMetadata>
   extends BuilderNode<T>
-  implements IAudienceBuilderNode {
+  implements IAudienceBuilderNode
+{
   type = AudienceBuilderNodeTypes.STEM;
   protected nodeIds: Set<string> = new Set();
   datasetTypeConstraint?: DatasetType;
@@ -147,7 +148,7 @@ export class StemNode<T extends StemMetadata = StemMetadata>
   ) {
     const payload = {
       stem: this,
-      node: (node as unknown) as N,
+      node: node as unknown as N,
       operator: this.operatorConstraint,
     };
 
@@ -276,7 +277,7 @@ export class StemNode<T extends StemMetadata = StemMetadata>
 
   static create(
     params: {
-      builder?: IBuilder, 
+      builder?: IBuilder;
       id?: string;
       level?: string;
       index?: number;
@@ -309,7 +310,7 @@ export class FilterStem extends StemNode {
 
   static create(
     params: {
-      builder?: IBuilder, 
+      builder?: IBuilder;
       id?: string;
       level?: string;
       index?: number;

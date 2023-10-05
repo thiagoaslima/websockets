@@ -13,13 +13,13 @@ import {ClassType} from '../../../types/classes.js';
 import {Result, ResultOk, ResultErr} from '../../result.js';
 import Graph from 'graphology';
 import {bfs} from 'graphology-traversal';
+// eslint-disable-next-line
 import {GraphOptions, SerializedGraph} from 'graphology-types';
 import {isPlainObject, isString} from '../../../utils/predicates.js';
 import {hasProperty} from '../../../utils/objects.js';
 
 const GRAPH_TYPE = 'directed';
 const GRAPH_VERSION = '0.0.1';
-const GRAPH_STORE_KEY = 'vtx:store';
 
 const graphOptions: GraphOptions = Object.freeze({
   allowSelfLoops: false,
@@ -180,9 +180,7 @@ export class GraphologyStore implements IBuilderStore {
   /**
    * A method implementing IDecoder to be used when unmarshalling node attributes.
    */
-  nodeDecoder<T extends IBuilderNode>(
-    nodeAttributes: GraphologyNodeAttributes
-  ): T {
+  nodeDecoder<T extends IBuilderNode>(_: GraphologyNodeAttributes): T {
     throw Error('Method not implemented');
   }
 
@@ -202,7 +200,7 @@ export class GraphologyStore implements IBuilderStore {
    * A method implementing IDecoder to be used when unmarshalling edge attributes.
    */
   edgeDecoder<T extends IBuilderEdge>(
-    edgeAttributes: GraphologyEdgeAttributes
+    _edgeAttributes: GraphologyEdgeAttributes
   ): T {
     throw Error('Method not implemented');
   }
@@ -377,7 +375,7 @@ export class GraphologyStore implements IBuilderStore {
         encode: this.nodeEncoder,
       });
 
-      this.graph.updateNode(atomId, attributes => {
+      this.graph.updateNode(atomId, (attributes: object) => {
         return {...attributes, ...serialized};
       });
 
@@ -404,9 +402,13 @@ export class GraphologyStore implements IBuilderStore {
         encode: this.edgeEncoder,
       });
 
-      this.graph.updateEdge(edge.source(), edge.target(), attributes => {
-        return {...attributes, ...serialized};
-      });
+      this.graph.updateEdge(
+        edge.source(),
+        edge.target(),
+        (attributes: object) => {
+          return {...attributes, ...serialized};
+        }
+      );
 
       return Promise.resolve(ResultOk.create(null));
     } catch (err) {
@@ -464,7 +466,7 @@ export class GraphologyStore implements IBuilderStore {
     return Promise.resolve(ResultOk.create(null));
   }
 
-  moveNode(node: IBuilderNode, level: string, index: number) {
+  moveNode(_node: IBuilderNode, _level: string, _index: number) {
     /**
      * TODO: To be implemented when needed. Should:
      *  * Handle edge deletion, creation, etc.
@@ -481,7 +483,7 @@ export class GraphologyStore implements IBuilderStore {
       throw Error('Unable to find target atom.');
     }
 
-    const edgeAttributes = this.graph.edges(atomId).map(e => {
+    const edgeAttributes = this.graph.edges(atomId).map((e: string) => {
       const attrs = {
         key: e,
         ...this.graph.getEdgeAttributes(e),
@@ -516,7 +518,7 @@ export class GraphologyStore implements IBuilderStore {
   traverse<T = unknown>(cb: (node: IBuilderNode) => T): T | void {
     let returnValue: T | undefined;
 
-    bfs(this.graph, (id, attrs, depth) => {
+    bfs(this.graph, (id, attrs, _depth) => {
       const result = this.createNode(id, attrs as GraphologyNodeAttributes);
       if (!result.ok) throw Error('Failed to create node object.');
 
@@ -528,6 +530,8 @@ export class GraphologyStore implements IBuilderStore {
         // According to the graphology docs, returning true kills traversal.
         return true;
       }
+
+      return;
     });
 
     return returnValue;
@@ -545,18 +549,20 @@ export class GraphologyStore implements IBuilderStore {
   }
 
   save() {
-    const jsonGraph = this.serialize();
-    localStorage.setItem(GRAPH_STORE_KEY, jsonGraph);
+    // TODO(joshua): Replace with in memory Redis store
+    // const _jsonGraph = this.serialize();
+    //localStorage.setItem(GRAPH_STORE_KEY, jsonGraph);
   }
 
   load() {
     if (this.graph.size !== 0) return;
 
-    const localGraph = localStorage.getItem(GRAPH_STORE_KEY);
-    if (!localGraph) return;
-
-    const serialized = this.deserialize(localGraph);
-    this.init(serialized);
+    // TODO(joshua): Replace with in memory Redis store
+    // const localGraph = localStorage.getItem(GRAPH_STORE_KEY);
+    // if (!localGraph) return;
+    //
+    // const serialized = this.deserialize(localGraph);
+    // this.init(serialized);
   }
 
   serialize(): string {

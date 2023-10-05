@@ -6,7 +6,10 @@ import {
 } from '../../../../types/builder.js';
 import {BuilderEdge} from '../../edge.js';
 
-type ChildEdgeConstructorParams = Omit<IBuilderEdgeConstructorParams, 'type'> & {
+type ChildEdgeConstructorParams = Omit<
+  IBuilderEdgeConstructorParams,
+  'type'
+> & {
   builder?: IBuilder;
 };
 
@@ -22,14 +25,9 @@ export class ChildEdge extends BuilderEdge<ChildEdgeMetadata> {
   readonly type = BuilderEdgeTypes.CHILD;
   private builder?: IBuilder;
 
-  constructor({
-    builder,
-    id,
-    source,
-    target,
-  }: ChildEdgeConstructorParams) {
+  constructor({builder, id, source, target}: ChildEdgeConstructorParams) {
     super({id, source, target, type: BuilderEdgeTypes.CHILD});
-    if (builder) this.builder = builder; 
+    if (builder) this.builder = builder;
   }
 
   get metadata(): ChildEdgeMetadata {

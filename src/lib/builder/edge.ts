@@ -15,7 +15,7 @@ export enum EdgeEventTags {
  */
 export type EdgeUpdatePayload<
   E extends IBuilderEdge,
-  C extends string = string
+  C extends string = string,
 > = {
   context?: C;
   edge: E;
@@ -25,10 +25,11 @@ export type EdgeUpdatePayload<
  * Edge object for a builder.
  */
 export abstract class BuilderEdge<
-    T extends Record<string, unknown> = Record<string, unknown>
+    T extends Record<string, unknown> = Record<string, unknown>,
   >
   extends BuilderAtom
-  implements IBuilderEdge {
+  implements IBuilderEdge
+{
   abstract type: BuilderEdgeTypes;
 
   private _source: string;
@@ -73,7 +74,7 @@ export abstract class BuilderEdge<
   emitUpdateEvent<E extends IBuilderEdge>(context?: string) {
     const tag = ChannelMessageTag.create<EdgeEventTags, EdgeUpdatePayload<E>>(
       EdgeEventTags.UPDATE,
-      {context, edge: (this as unknown) as E}
+      {context, edge: this as unknown as E}
     );
 
     const message = ChannelMessage.fromTags([tag]);

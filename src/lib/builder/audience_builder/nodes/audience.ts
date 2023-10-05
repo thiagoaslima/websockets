@@ -34,7 +34,8 @@ const SUPPORTED_MODES = [AudienceMode.EXCLUDE, AudienceMode.INCLUDE];
  */
 export class AudienceNode
   extends BuilderNode<AudienceMetadata>
-  implements IAudienceBuilderNode {
+  implements IAudienceBuilderNode
+{
   readonly type = AudienceBuilderNodeTypes.AUDIENCE;
 
   // Default values, to be overridden by a 'create' factory.

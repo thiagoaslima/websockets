@@ -1,0 +1,20 @@
+image: node:20
+
+stages: 
+  - lint
+
+cache:
+  key: npm
+  policy: pull-push
+  paths:
+    - node_modules/
+
+lint-job:
+  stage: lint
+  script:
+    - echo "Linting..."
+    - npm install gts --prefer-ofline
+    - npm install eslint --prefer-ofline
+    - npm run lint
+    - echo "Linting complete."
+

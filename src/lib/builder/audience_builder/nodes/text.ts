@@ -33,7 +33,8 @@ export enum TextIndentation {
  */
 export class TextNode<M extends TextMetadata = TextMetadata>
   extends BuilderNode<M>
-  implements IAudienceBuilderNode {
+  implements IAudienceBuilderNode
+{
   type = AudienceBuilderNodeTypes.TEXT;
   content = '';
   indentation: TextIndentation = TextIndentation.ZERO;

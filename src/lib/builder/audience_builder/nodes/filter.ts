@@ -86,7 +86,9 @@ export function createExpressionFromType<T extends ExpressionTypes>(
     case ExpressionTypes.STRING: {
       const expression = StringExpression.create({field, displayName});
       if (operator) expression.operator = operator;
-      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.STRING];
+      if (value)
+        expression.value =
+          value as ExpressionValueTypeMap[ExpressionTypes.STRING];
       return expression;
     }
 
@@ -100,7 +102,9 @@ export function createExpressionFromType<T extends ExpressionTypes>(
     case ExpressionTypes.INTEGER_64: {
       const expression = NumberExpression.create(type, {field, displayName});
       if (operator) expression.operator = operator;
-      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.NUMBER];
+      if (value)
+        expression.value =
+          value as ExpressionValueTypeMap[ExpressionTypes.NUMBER];
       return expression;
     }
 
@@ -109,7 +113,9 @@ export function createExpressionFromType<T extends ExpressionTypes>(
     case ExpressionTypes.DATE: {
       const expression = DatetimeExpression.create(type, {field, displayName});
       if (operator) expression.operator = operator;
-      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.DATETIME];
+      if (value)
+        expression.value =
+          value as ExpressionValueTypeMap[ExpressionTypes.DATETIME];
       return expression;
     }
 
@@ -117,14 +123,18 @@ export function createExpressionFromType<T extends ExpressionTypes>(
     case ExpressionTypes.BOOLEAN: {
       const expression = BooleanExpression.create({field, displayName});
       if (operator) expression.operator = operator;
-      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.BOOLEAN];
+      if (value)
+        expression.value =
+          value as ExpressionValueTypeMap[ExpressionTypes.BOOLEAN];
       return expression;
     }
 
     case ExpressionTypes.ARRAY: {
       const expression = ArrayExpression.create({field, displayName});
       if (operator) expression.operator = operator;
-      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.ARRAY];
+      if (value)
+        expression.value =
+          value as ExpressionValueTypeMap[ExpressionTypes.ARRAY];
       return expression;
     }
   }
@@ -167,7 +177,8 @@ export abstract class FilterExpression implements IFilterExpression {
  */
 export class StringExpression
   extends FilterExpression
-  implements IStringExpression {
+  implements IStringExpression
+{
   readonly type = ExpressionTypes.STRING;
 
   operator = ExpressionOperators.EQUALS;
@@ -205,7 +216,8 @@ export class StringExpression
  */
 export class NumberExpression
   extends FilterExpression
-  implements INumberExpression {
+  implements INumberExpression
+{
   readonly type: NumberExpressionType = ExpressionTypes.INTEGER;
 
   operator = ExpressionOperators.EQUALS;
@@ -251,7 +263,8 @@ export class NumberExpression
  */
 export class BooleanExpression
   extends FilterExpression
-  implements IBooleanExpression {
+  implements IBooleanExpression
+{
   readonly type: BooleanExpressionType = ExpressionTypes.BOOL;
 
   operator = ExpressionOperators.EQUALS;
@@ -289,7 +302,8 @@ export class BooleanExpression
  */
 export class DatetimeExpression
   extends FilterExpression
-  implements IDatetimeExpression {
+  implements IDatetimeExpression
+{
   readonly type: DatetimeExpressionType = ExpressionTypes.DATE;
 
   private constructor(
@@ -335,11 +349,13 @@ export class DatetimeExpression
  */
 export class ArrayExpression
   extends FilterExpression
-  implements IArrayExpression {
+  implements IArrayExpression
+{
   readonly type = ExpressionTypes.ARRAY;
 
   operator = ExpressionOperators.EQUALS;
-  value: ExpressionValueTuple<ValidArrayExpressionValue> = nullExpressionValue<ValidArrayExpressionValue>();
+  value: ExpressionValueTuple<ValidArrayExpressionValue> =
+    nullExpressionValue<ValidArrayExpressionValue>();
 
   static fromJSON(json: string): ArrayExpression | undefined {
     try {
@@ -374,7 +390,8 @@ export class ArrayExpression
  */
 export class FilterNode
   extends BuilderNode<FilterMetadata>
-  implements IAudienceBuilderNode {
+  implements IAudienceBuilderNode
+{
   readonly type = AudienceBuilderNodeTypes.FILTER;
 
   // Default values, to be overridden by 'create'

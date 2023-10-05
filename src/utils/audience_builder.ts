@@ -1,8 +1,7 @@
 import {StemNode} from '../lib/builder/audience_builder/nodes/stem.js';
 import {IBuilderNode} from '../types/builder.js';
-import {Nullable} from '../types/utilities.js'
+import {Nullable} from '../types/utilities.js';
 import {
-  AudienceBuilderField,
   AudienceBuilderNodeTypes,
   ExpressionCategories,
   ExpressionOperators,
@@ -15,7 +14,6 @@ import {
   IFilterExpression,
   INumberExpression,
   IStringExpression,
-  ValidArrayExpressionValue,
   ValidExpressionValue,
 } from '../types/audience_builder/index.js';
 import {
@@ -129,7 +127,7 @@ export function isArrayExpression(
  * Returns a null expression value.
  */
 export function nullExpressionValue<
-  T = ValidExpressionValue
+  T = ValidExpressionValue,
 >(): ExpressionValueTuple<T> {
   return [null];
 }
@@ -231,8 +229,7 @@ export function isBoolValue(x: unknown): x is IBooleanExpression['value'] {
 /** Determines whether or not a given value is a valid ArrayExpression value. */
 export function isArrayValue(x: unknown): x is IArrayExpression['value'] {
   if (!isValidExpression(x)) return false;
-  return x.every(y => ['string', 'number'].includes(typeof y))
-;
+  return x.every(y => ['string', 'number'].includes(typeof y));
 }
 
 /** Determines whether or not a value is a valid expression type. */
@@ -251,8 +248,8 @@ export function isExpressionType(x: unknown): x is ExpressionTypes {
  * Determines whether a given value corresponds to an expression type.
  */
 export function isValidExpressionValue<T extends ExpressionTypes>(
-  type: T, 
-  value: unknown,
+  type: T,
+  value: unknown
 ): value is ExpressionValueTypeMap[T] {
   switch (typeToCategory(type)) {
     case ExpressionCategories.STRING: {

@@ -1,7 +1,4 @@
-import {
-  conjuctiveOperatorMap,
-  stemmableNeighborOperators,
-} from '../../../../constants/audience_builder.js';
+import {stemmableNeighborOperators} from '../../../../constants/audience_builder.js';
 import {ChannelMessage, ChannelMessageTag} from '../../../channel.js';
 import {
   BuilderEdgeTypes,
@@ -23,7 +20,10 @@ export const filterOperators = [
   NeighborOperators.AND_NOT,
 ];
 
-type NeighborEdgeConstructorParams = Omit<IBuilderEdgeConstructorParams, 'type'> & {
+type NeighborEdgeConstructorParams = Omit<
+  IBuilderEdgeConstructorParams,
+  'type'
+> & {
   builder?: IBuilder;
 };
 
@@ -48,12 +48,7 @@ export class NeighborEdge extends BuilderEdge<NeighborMetadata> {
 
   private builder?: IBuilder;
 
-  constructor({
-    builder,
-    id,
-    source,
-    target,
-  }: NeighborEdgeConstructorParams) {
+  constructor({builder, id, source, target}: NeighborEdgeConstructorParams) {
     super({id, source, target, type: BuilderEdgeTypes.FORWARD});
     if (builder) this.builder = builder;
   }
@@ -90,7 +85,9 @@ export class NeighborEdge extends BuilderEdge<NeighborMetadata> {
     return this.builder.getNodeFromCache(this.target());
   }
 
-  validOperators(opts: {allowFlexOrs: boolean} = {allowFlexOrs: false}): NeighborOperators[] {
+  validOperators(
+    opts: {allowFlexOrs: boolean} = {allowFlexOrs: false}
+  ): NeighborOperators[] {
     let operators = Object.values(NeighborOperators);
     const target = this.getTargetNode();
     const source = this.getSourceNode();
@@ -143,7 +140,9 @@ export class NeighborEdge extends BuilderEdge<NeighborMetadata> {
     operator: NeighborOperators,
     opts: {allowFlexOrs: boolean} = {allowFlexOrs: true}
   ) {
-    if (!this.validOperators({allowFlexOrs: opts.allowFlexOrs}).includes(operator)) {
+    if (
+      !this.validOperators({allowFlexOrs: opts.allowFlexOrs}).includes(operator)
+    ) {
       return;
     }
 
@@ -180,7 +179,11 @@ export class NeighborEdge extends BuilderEdge<NeighborMetadata> {
     return edge;
   }
 
-  static create(source: string, target: string, builder?: IBuilder): NeighborEdge {
+  static create(
+    source: string,
+    target: string,
+    builder?: IBuilder
+  ): NeighborEdge {
     const id = NeighborEdge.createEdgeId(source, target);
 
     const edge = new NeighborEdge({builder, id, source, target});

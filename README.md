@@ -34,6 +34,20 @@ $ npm run build
 $ npm start
 ```
 
+## Code Review
+
+Please be use to run the linter before submitting an MR:
+
+```
+npm run lint
+```
+
+You can also automatically fix linting errors by running:
+
+```
+npm run fix
+```
+
 ## Documentation
 * [Fastify docs](https://fastify.dev/docs/latest/)
 * [TypeBox docs](https://github.com/sinclairzx81/typebox)

@@ -41,5 +41,4 @@ export const isBool = (value: unknown): value is boolean =>
   typeof value === 'boolean';
 
 /** Determines if a value is a Date or not */
-export const isDate = (value: unknown): value is Date =>
-  value instanceof Date;
+export const isDate = (value: unknown): value is Date => value instanceof Date;

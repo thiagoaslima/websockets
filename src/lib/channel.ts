@@ -34,7 +34,7 @@ export interface IChannelMessage {
    * 1 => means the instance w/ this method is "greater than" the message passed as parameter
    * */
   compare(message: IChannelMessage): -1 | 0 | 1;
-  
+
   /** Determines whether or not a message has a tag */
   hasTag(key: string): boolean;
 }
@@ -78,8 +78,12 @@ export interface IChannelSubscription {
  * Default implementation of a channel message tag.
  */
 export class ChannelMessageTag<K extends string = string, V = unknown>
-  implements IChannelMessageTag<V> {
-  private constructor(private _key: K, private _value: V) {
+  implements IChannelMessageTag<V>
+{
+  private constructor(
+    private _key: K,
+    private _value: V
+  ) {
     this._key = _key;
     this._value = _value;
   }
@@ -255,7 +259,7 @@ export class RxJSChannel implements IChannel {
       IChannelSubscription,
       [
         RxJSObservable<IChannelMessage>,
-        /** cleanup object */ {unsubscribe: CallableFunction}
+        /** cleanup object */ {unsubscribe: CallableFunction},
       ]
     > = new Map<
       IChannelSubscription,

@@ -10,12 +10,15 @@ export type BuilderQuerySelector<T> =
       resolver: (items: Iterable<string> | Iterable<T>) => Iterable<T>;
     };
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IBuilderCtx {}
+
 export interface IBuilderAction<T> {
   execute(): T | Promise<T>;
   cancel(): boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IBuilderQueryCtx {}
 
 export interface IBuilderCache {
@@ -224,7 +227,7 @@ export enum IBuilderAtomTypes {
  * builder.
  */
 export interface IBuilderNode<
-  T extends Record<string, unknown> = Record<string, unknown>
+  T extends Record<string, unknown> = Record<string, unknown>,
 > extends IBuilderAtom {
   /**
    * A string key represeinting the type of the node.
@@ -287,7 +290,7 @@ export interface IBuilderEdgeConstructorParams
  * builder.
  */
 export interface IBuilderEdge<
-  T extends Record<string, unknown> = Record<string, unknown>
+  T extends Record<string, unknown> = Record<string, unknown>,
 > extends IBuilderAtom {
   /**
    * A string key represeinting the type of the edge.
@@ -318,25 +321,23 @@ export type IBuilderStoreMutation<T extends IBuilderAtom = IBuilderAtom> = (
   atom: T
 ) => T;
 
-export type IBuilderStoreValue =
-  | string
-  | IBuilderAtom
-  | IBuilderStoreMutation;
+export type IBuilderStoreValue = string | IBuilderAtom | IBuilderStoreMutation;
 
 /**
  * In-memory store of a builder graph w/ methods related to
  * reading, mutating, etc.
  */
- export interface IBuilderStore<
- T extends Record<string, unknown> = Record<string, unknown>
+export interface IBuilderStore<
+  T extends Record<string, unknown> = Record<string, unknown>,
 > {
   /**
-    * Store metadata is used to include graph-level parameters.
-    */
+   * Store metadata is used to include graph-level parameters.
+   */
   metadata: T;
   /**
    * Used to initialize graph data.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   init: (...args: any[]) => void;
 
   /**
@@ -411,7 +412,7 @@ export type IBuilderStoreValue =
   serialize(): string;
 
   /**
-   * Returns the raw graph of a builder store. 
+   * Returns the raw graph of a builder store.
    */
   export(): unknown;
 
@@ -467,7 +468,7 @@ export interface ICodec<I, O> {
 }
 
 export type BuilderStoreNodeFactoryParams<
-  T extends Record<string, unknown> = Record<string, unknown>
+  T extends Record<string, unknown> = Record<string, unknown>,
 > = {
   id: string;
   index?: number;
@@ -477,7 +478,7 @@ export type BuilderStoreNodeFactoryParams<
 };
 
 export type BuilderStoreEdgeFactoryParams<
-  T extends Record<string, unknown> = Record<string, unknown>
+  T extends Record<string, unknown> = Record<string, unknown>,
 > = {
   source: string;
   target: string;
@@ -486,14 +487,17 @@ export type BuilderStoreEdgeFactoryParams<
 };
 
 export type EdgeClassType<T extends IBuilderEdge> = (new (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any[]
 ) => T) & {
   fromStore?: (params: BuilderStoreEdgeFactoryParams) => T;
 };
 
 export type NodeClassType<T extends IBuilderNode> = (new (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ...args: any[]
 ) => T) & {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fromStore?: (params: BuilderStoreNodeFactoryParams<any>) => T;
 };
 

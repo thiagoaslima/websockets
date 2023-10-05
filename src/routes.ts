@@ -6,14 +6,14 @@ import {
 import {HelloWorld, HelloWorldType} from './schemata/hello_world.js';
 import {helloWorld} from './handlers/hello_world.js';
 
-export default function(
+export default function (
   app: FastifyInstance,
   _: FastifyServerOptions,
-  done: HookHandlerDoneFunction,
+  done: HookHandlerDoneFunction
 ) {
   /** Root route */
   app.get<{Reply: HelloWorldType}>(
-    '/', 
+    '/',
     {
       schema: {
         response: {

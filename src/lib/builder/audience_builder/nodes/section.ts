@@ -1,6 +1,9 @@
 import {LAYER_ROOT_KEY} from '../../../../constants/audience_builder.js';
 import {BuilderStoreNodeFactoryParams} from '../../../../types/builder.js';
-import {AudienceBuilderNodeTags, AudienceBuilderNodeTypes} from '../../../../types/audience_builder/index.js';
+import {
+  AudienceBuilderNodeTags,
+  AudienceBuilderNodeTypes,
+} from '../../../../types/audience_builder/index.js';
 import {DatasetType} from '../../../../types/datasets.js';
 import {BuilderNode} from '../../node.js';
 

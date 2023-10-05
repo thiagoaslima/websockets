@@ -1,5 +1,8 @@
 import {LAYER_ROOT_KEY} from '../../../../constants/audience_builder.js';
-import {BuilderStoreNodeFactoryParams, IBuilder} from '../../../../types/builder.js';
+import {
+  BuilderStoreNodeFactoryParams,
+  IBuilder,
+} from '../../../../types/builder.js';
 import {
   AudienceBuilderNodeTypes,
   ExpressionValueTuple,
@@ -59,7 +62,7 @@ export type AggregateDisplayDomain = string;
 export type AggregateDisplayUnit = string;
 export type AggregateDisplayTuple = [
   AggregateDisplayDomain,
-  AggregateDisplayUnit
+  AggregateDisplayUnit,
 ];
 export enum AggregateDisplayIndices {
   ONE,
@@ -181,7 +184,8 @@ export class AggregateExpression {
 
 export class FlexNode
   extends StemNode<FlexStemMetadata>
-  implements IAudienceBuilderNode {
+  implements IAudienceBuilderNode
+{
   readonly type = AudienceBuilderNodeTypes.FLEX;
 
   // Default values, to be overridden by a 'create' factory.
@@ -196,7 +200,7 @@ export class FlexNode
     AudienceBuilderNodeTypes.FILTER,
   ]);
 
-  dataset(builder: IBuilder) {
+  dataset(_builder: IBuilder) {
     throw Error('Unimplemented.');
   }
 
@@ -303,13 +307,14 @@ export class FlexNode
     operator?: NeighborOperators;
     datasetType?: FlexDatasets;
     expression?: AggregateExpression;
-    datasetGroupId?: number; 
+    datasetGroupId?: number;
   }): FlexNode {
     const node = new FlexNode({id: params.id});
     const builder = params.builder;
 
     node.level = params.level || LAYER_ROOT_KEY;
     node.index = params.index || 0;
+    node.builder = builder;
 
     if (params.datasetId) {
       node.datasetId = params.datasetId;

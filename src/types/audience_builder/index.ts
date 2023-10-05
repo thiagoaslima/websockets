@@ -27,7 +27,7 @@ export enum ExpressionCategories {
   BOOLEAN = 'boolean',
   ARRAY = 'array',
   STRING = 'string',
-};
+}
 
 export enum AudienceBuilderView {
   DEFAULT = 'default',
@@ -187,7 +187,7 @@ export type ValidExpressionValue =
 
 export type ExpressionValueTuple<T = ValidExpressionValue> = [
   Nullable<T>,
-  Nullable<T>?
+  Nullable<T>?,
 ];
 
 export type ExpressionOperatorDisplay = {
@@ -297,8 +297,7 @@ export type AudienceBuilderPolicies = {
   newDataset: boolean;
 };
 
-
-/** 
+/**
  * A map of every expression type the the type of its value.
  */
 export type ExpressionValueTypeMap = {
@@ -323,4 +322,3 @@ export type ExpressionValueTypeMap = {
   /* Array */
   [ExpressionTypes.ARRAY]: IArrayExpression['value'];
 };
-

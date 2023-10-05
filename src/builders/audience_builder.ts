@@ -8,8 +8,8 @@ import {
 } from '../lib/builder/stores/graphology.js';
 import {Channel} from '../lib/channel.js';
 import {Builder} from '../lib/builder/index.js';
-import {Dataset} from '../types/datasets.js'
-import {SectionNode} from '../lib/builder/audience_builder/nodes/section.js'
+import {Dataset} from '../types/datasets.js';
+import {SectionNode} from '../lib/builder/audience_builder/nodes/section.js';
 import {pushNode} from '../utils/nodes.js';
 
 export const AUDIENCE_BUILDER_KEY = 'ab';
@@ -43,8 +43,9 @@ export class AudienceBuilder extends Builder {
 }
 
 /** Module instance of the AUdience Builder. */
-export const createAudienceBuilder = () => new AudienceBuilder({
-  key: AUDIENCE_BUILDER_KEY,
-  store,
-  channel,
-});
+export const createAudienceBuilder = () =>
+  new AudienceBuilder({
+    key: AUDIENCE_BUILDER_KEY,
+    store,
+    channel,
+  });

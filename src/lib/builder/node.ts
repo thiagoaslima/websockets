@@ -1,4 +1,7 @@
-import {IBuilderNode, IBuilderAtomConstructorParams} from '../../types/builder.js';
+import {
+  IBuilderNode,
+  IBuilderAtomConstructorParams,
+} from '../../types/builder.js';
 import {ChannelMessage, ChannelMessageTag} from '../channel.js';
 import {BuilderAtom} from './atom.js';
 
@@ -25,7 +28,7 @@ export type NodeMovePayload = {
  */
 export type NodeUpdatePayload<
   N extends IBuilderNode,
-  C extends string = string
+  C extends string = string,
 > = {
   context: C;
   node: N;
@@ -35,10 +38,11 @@ export type NodeUpdatePayload<
  * Node object for a builder.
  */
 export abstract class BuilderNode<
-    T extends Record<string, unknown> = Record<string, unknown>
+    T extends Record<string, unknown> = Record<string, unknown>,
   >
   extends BuilderAtom
-  implements IBuilderNode {
+  implements IBuilderNode
+{
   abstract type: string;
   abstract level: string;
   abstract index: number;
@@ -72,7 +76,7 @@ export abstract class BuilderNode<
   emitUpdateEvent<N extends IBuilderNode>(context: string) {
     const tag = ChannelMessageTag.create<NodeEventTags, NodeUpdatePayload<N>>(
       NodeEventTags.UPDATE,
-      {context, node: (this as unknown) as N}
+      {context, node: this as unknown as N}
     );
 
     const message = ChannelMessage.fromTags([tag]);

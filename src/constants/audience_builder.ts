@@ -1,5 +1,5 @@
-import { ChildEdge } from '../lib/builder/audience_builder/edges/child.js';
-import { NeighborEdge } from '../lib/builder/audience_builder/edges/neighbor.js';
+import {ChildEdge} from '../lib/builder/audience_builder/edges/child.js';
+import {NeighborEdge} from '../lib/builder/audience_builder/edges/neighbor.js';
 import {AudienceNode} from '../lib/builder/audience_builder/nodes/audience.js';
 import {FilterNode} from '../lib/builder/audience_builder/nodes/filter.js';
 import {FlexNode} from '../lib/builder/audience_builder/nodes/flex_filter.js';
@@ -9,14 +9,18 @@ import {StemNode} from '../lib/builder/audience_builder/nodes/stem.js';
 import {TextNode} from '../lib/builder/audience_builder/nodes/text.js';
 import {
   AudienceBuilderNodeTypes,
-  ExpressionOperatorDisplay,
   ExpressionOperators,
   ExpressionTypes,
   FilterOperators,
-  InputExpressionTypes,
   NeighborOperators,
 } from '../types/audience_builder/index.js';
-import {NodeClassType, IBuilderNode, BuilderEdgeTypes, EdgeClassType, IBuilderEdge} from '../types/builder.js';
+import {
+  NodeClassType,
+  IBuilderNode,
+  BuilderEdgeTypes,
+  EdgeClassType,
+  IBuilderEdge,
+} from '../types/builder.js';
 
 export const LAYER_ROOT_KEY = '__AB_ROOT__';
 
@@ -187,5 +191,8 @@ export const conjuctiveOperatorMap = new Map([
   [AudienceBuilderNodeTypes.AUDIENCE, conjuntiveNeighborOperators],
   [AudienceBuilderNodeTypes.FILTER, conjuntiveNeighborOperators],
   [AudienceBuilderNodeTypes.STEM, conjuntiveNeighborOperators],
-  [AudienceBuilderNodeTypes.FLEX, [NeighborOperators.AND, NeighborOperators.OR]],
+  [
+    AudienceBuilderNodeTypes.FLEX,
+    [NeighborOperators.AND, NeighborOperators.OR],
+  ],
 ]);

@@ -3,7 +3,10 @@ import {HeadingNode} from '../nodes/heading.js';
 import {SectionNode} from '../nodes/section.js';
 import {TextNode} from '../nodes/text.js';
 import {IBuilderTemplate} from '../../../../types/builder.js';
-import {AudienceBuilderNodeTypes, ExpressionTypes} from '../../../../types/audience_builder/index.js';
+import {
+  AudienceBuilderNodeTypes,
+  ExpressionTypes,
+} from '../../../../types/audience_builder/index.js';
 import {DatasetType} from '../../../../types/datasets.js';
 import {AudienceBuilder} from '../../../../builders/audience_builder.js';
 import {insertNode, addFlexNode} from '../../../../utils/nodes.js';
@@ -73,11 +76,7 @@ export class DefaultTemplate implements IBuilderTemplate {
           });
 
           if (!datasets.length) {
-            addFlexNode(
-              builder,
-              {},
-              {index: builder.primarySection.index}
-            );
+            addFlexNode(builder, {}, {index: builder.primarySection.index});
           }
         },
       ],
@@ -120,8 +119,8 @@ export class DefaultTemplate implements IBuilderTemplate {
           field.type as ExpressionTypes,
           {
             field: field.id,
-            displayName: field.display_name
-          },
+            displayName: field.display_name,
+          }
         );
         filter.addExpression(expression);
         filters.add(filter);
@@ -163,10 +162,7 @@ export class DefaultTemplate implements IBuilderTemplate {
       }
 
       if (type === AudienceBuilderNodeTypes.FLEX) {
-        this.sectionCallbacks.get(type)?.(
-          builder,
-          builder.primarySection
-        );
+        this.sectionCallbacks.get(type)?.(builder, builder.primarySection);
       }
     }
   }

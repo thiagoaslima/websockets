@@ -8,4 +8,3 @@ export function createEdgeId(
 ): string {
   return `${source}:${type}:${target}`;
 }
-

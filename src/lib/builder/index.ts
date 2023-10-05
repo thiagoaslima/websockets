@@ -20,6 +20,7 @@ import {
   IChannelMessage,
   IChannelSubscription,
 } from '../channel.js';
+// eslint-disable-next-line
 import {SerializedGraph} from 'graphology-types';
 import {isString} from '../../utils/predicates.js';
 import {SerializedStore} from './stores/graphology.js';
@@ -143,11 +144,11 @@ export class Builder implements IBuilder {
     return this.history[0];
   }
 
-  reset(...args: unknown[]): void {
+  reset(..._args: unknown[]): void {
     throw new Error('Method not implemented.');
   }
 
-  ctx(update?: (ctx: IBuilderCtx) => IBuilderCtx): IBuilderCtx {
+  ctx(_update?: (ctx: IBuilderCtx) => IBuilderCtx): IBuilderCtx {
     throw new Error('Method not implemented.');
   }
 
@@ -192,7 +193,7 @@ export class Builder implements IBuilder {
     return this.cache.edges.get(edgeId);
   }
 
-  async putNode(node: IBuilderNode, ctx?: IBuilderQueryCtx): Promise<void> {
+  async putNode(node: IBuilderNode, _ctx?: IBuilderQueryCtx): Promise<void> {
     try {
       // Update node Cache.
       this.cache.nodes.set(node.id, node);
@@ -239,15 +240,15 @@ export class Builder implements IBuilder {
   }
 
   getNodes(
-    selector: BuilderQuerySelector<IBuilderNode>,
-    ctx?: IBuilderQueryCtx
+    _selector: BuilderQuerySelector<IBuilderNode>,
+    _ctx?: IBuilderQueryCtx
   ): Iterable<IBuilderNode> {
     throw new Error('Method not implemented.');
   }
 
   async getNode(
     selector: string,
-    ctx?: IBuilderQueryCtx
+    _ctx?: IBuilderQueryCtx
   ): Promise<IBuilderNode | void> {
     try {
       const result = await this.store.getNode(selector);
@@ -271,7 +272,7 @@ export class Builder implements IBuilder {
     }
   }
 
-  async hasNode(selector: string, ctx?: IBuilderQueryCtx): Promise<boolean> {
+  async hasNode(selector: string, _ctx?: IBuilderQueryCtx): Promise<boolean> {
     try {
       const result = await this.store.hasNode(selector);
       if (!result.ok) throw result as Error;
@@ -284,13 +285,13 @@ export class Builder implements IBuilder {
   }
 
   removeNodes(
-    selector: BuilderQuerySelector<IBuilderNode> | Iterable<IBuilderNode>,
-    ctx?: IBuilderQueryCtx
+    _selector: BuilderQuerySelector<IBuilderNode> | Iterable<IBuilderNode>,
+    _ctx?: IBuilderQueryCtx
   ): void {
     throw new Error('Method not implemented.');
   }
 
-  async removeNode(key: string, ctx?: IBuilderQueryCtx): Promise<void> {
+  async removeNode(key: string, _ctx?: IBuilderQueryCtx): Promise<void> {
     try {
       const node = this.getNodeFromCache(key);
 
@@ -319,7 +320,7 @@ export class Builder implements IBuilder {
     }
   }
 
-  async purgeNode(node: IBuilderNode, ctx?: IBuilderQueryCtx): Promise<void> {
+  async purgeNode(node: IBuilderNode, _ctx?: IBuilderQueryCtx): Promise<void> {
     try {
       const level = await this.getLevel(node.id);
       if (level?.length) {
@@ -338,7 +339,7 @@ export class Builder implements IBuilder {
     }
   }
 
-  async putEdge(edge: IBuilderEdge, ctx?: IBuilderQueryCtx): Promise<void> {
+  async putEdge(edge: IBuilderEdge, _ctx?: IBuilderQueryCtx): Promise<void> {
     try {
       // Update edge Cache.
       this.cache.edges.set(edge.id, edge);
@@ -420,7 +421,7 @@ export class Builder implements IBuilder {
     source: string,
     target: string,
     type: BuilderEdgeTypes,
-    ctx?: IBuilderQueryCtx
+    _ctx?: IBuilderQueryCtx
   ): Promise<IBuilderEdge | void> {
     try {
       const result = await this.store.getEdge(
@@ -436,7 +437,7 @@ export class Builder implements IBuilder {
 
   async getEdgesForNode(
     nodeId: string,
-    ctx?: IBuilderQueryCtx
+    _ctx?: IBuilderQueryCtx
   ): Promise<IBuilderEdge[] | void> {
     try {
       const result = await this.store.getEdgesForNode(nodeId);
@@ -449,20 +450,20 @@ export class Builder implements IBuilder {
   }
 
   getEdges(
-    selector: BuilderQuerySelector<IBuilderEdge>,
-    ctx?: IBuilderQueryCtx
+    _selector: BuilderQuerySelector<IBuilderEdge>,
+    _ctx?: IBuilderQueryCtx
   ): Iterable<IBuilderEdge> {
     throw new Error('Method not implemented.');
   }
 
   removeEdges(
-    selector: BuilderQuerySelector<IBuilderEdge> | Iterable<IBuilderEdge>,
-    ctx?: IBuilderQueryCtx
+    _selector: BuilderQuerySelector<IBuilderEdge> | Iterable<IBuilderEdge>,
+    _ctx?: IBuilderQueryCtx
   ): void {
     throw new Error('Method not implemented.');
   }
 
-  async removeEdge(key: string, ctx?: IBuilderQueryCtx): Promise<void> {
+  async removeEdge(key: string, _ctx?: IBuilderQueryCtx): Promise<void> {
     try {
       const edgeExists = await this.hasEdgeById(key);
       if (!edgeExists) return;
@@ -546,7 +547,7 @@ export class Builder implements IBuilder {
   async putLevel(
     levelId: string,
     mutation: (level: BuilderHierarchicalLevel) => BuilderHierarchicalLevel,
-    ctx?: IBuilderQueryCtx
+    _ctx?: IBuilderQueryCtx
   ) {
     try {
       let level: BuilderHierarchicalLevel = [];
@@ -594,7 +595,7 @@ export class Builder implements IBuilder {
     }
   }
 
-  dispatch<T, K>(action: IBuilderAction<T>): K | Promise<K> {
+  dispatch<T, K>(_action: IBuilderAction<T>): K | Promise<K> {
     throw new Error('Method not implemented.');
   }
 
