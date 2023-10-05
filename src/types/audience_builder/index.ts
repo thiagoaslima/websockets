@@ -21,6 +21,14 @@ export type AudienceBuilderField = {
   description?: string;
 };
 
+export enum ExpressionCategories {
+  NUMBER = 'number',
+  DATETIME = 'datetime',
+  BOOLEAN = 'boolean',
+  ARRAY = 'array',
+  STRING = 'string',
+};
+
 export enum AudienceBuilderView {
   DEFAULT = 'default',
   DISPLAY = 'display',
@@ -288,3 +296,31 @@ export type BuilderPreferenceValue = {
 export type AudienceBuilderPolicies = {
   newDataset: boolean;
 };
+
+
+/** 
+ * A map of every expression type the the type of its value.
+ */
+export type ExpressionValueTypeMap = {
+  /* String */
+  [ExpressionTypes.STRING]: IStringExpression['value'];
+  /* Numeric */
+  [ExpressionTypes.NUMBER]: INumberExpression['value'];
+  [ExpressionTypes.NUMERIC]: INumberExpression['value'];
+  [ExpressionTypes.INT]: INumberExpression['value'];
+  [ExpressionTypes.INT_64]: INumberExpression['value'];
+  [ExpressionTypes.FLOAT]: INumberExpression['value'];
+  [ExpressionTypes.FLOAT_64]: INumberExpression['value'];
+  [ExpressionTypes.INTEGER]: INumberExpression['value'];
+  [ExpressionTypes.INTEGER_64]: INumberExpression['value'];
+  /* Datetime */
+  [ExpressionTypes.DATETIME]: IDatetimeExpression['value'];
+  [ExpressionTypes.TIMESTAMP]: IDatetimeExpression['value'];
+  [ExpressionTypes.DATE]: IDatetimeExpression['value'];
+  /* Boolean */
+  [ExpressionTypes.BOOL]: IBooleanExpression['value'];
+  [ExpressionTypes.BOOLEAN]: IBooleanExpression['value'];
+  /* Array */
+  [ExpressionTypes.ARRAY]: IArrayExpression['value'];
+};
+

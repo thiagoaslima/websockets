@@ -43,7 +43,7 @@ export class AudienceBuilder extends Builder {
 }
 
 /** Module instance of the AUdience Builder. */
-export const createAudienceBuilder = () => new Builder({
+export const createAudienceBuilder = () => new AudienceBuilder({
   key: AUDIENCE_BUILDER_KEY,
   store,
   channel,

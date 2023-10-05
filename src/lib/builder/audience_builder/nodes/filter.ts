@@ -23,6 +23,7 @@ import {
   ValidArrayExpressionValue,
   IAudienceBuilderNode,
   BooleanExpressionType,
+  ExpressionValueTypeMap,
 } from '../../../../types/audience_builder/index.js';
 import {
   isArrayExpression,
@@ -66,15 +67,27 @@ export enum FilterUpdateContexts {
 /**
  * Creates a filter expression.
  */
-export function createExpressionFromType(
-  type: ExpressionTypes,
-  field: string,
-  displayName = ''
+export function createExpressionFromType<T extends ExpressionTypes>(
+  type: T,
+  {
+    field,
+    displayName,
+    operator,
+    value,
+  }: {
+    field: string;
+    displayName?: string;
+    operator?: ExpressionOperators;
+    value?: ExpressionValueTypeMap[T];
+  }
 ): FilterExpression {
   switch (type) {
     default:
     case ExpressionTypes.STRING: {
-      return StringExpression.create({field, displayName});
+      const expression = StringExpression.create({field, displayName});
+      if (operator) expression.operator = operator;
+      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.STRING];
+      return expression;
     }
 
     case ExpressionTypes.NUMBER:
@@ -85,22 +98,34 @@ export function createExpressionFromType(
     case ExpressionTypes.FLOAT_64:
     case ExpressionTypes.INTEGER:
     case ExpressionTypes.INTEGER_64: {
-      return NumberExpression.create(type, {field, displayName});
+      const expression = NumberExpression.create(type, {field, displayName});
+      if (operator) expression.operator = operator;
+      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.NUMBER];
+      return expression;
     }
 
     case ExpressionTypes.DATETIME:
     case ExpressionTypes.TIMESTAMP:
     case ExpressionTypes.DATE: {
-      return DatetimeExpression.create(type, {field, displayName});
+      const expression = DatetimeExpression.create(type, {field, displayName});
+      if (operator) expression.operator = operator;
+      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.DATETIME];
+      return expression;
     }
 
     case ExpressionTypes.BOOL:
     case ExpressionTypes.BOOLEAN: {
-      return BooleanExpression.create({field, displayName});
+      const expression = BooleanExpression.create({field, displayName});
+      if (operator) expression.operator = operator;
+      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.BOOLEAN];
+      return expression;
     }
 
     case ExpressionTypes.ARRAY: {
-      return ArrayExpression.create({field, displayName});
+      const expression = ArrayExpression.create({field, displayName});
+      if (operator) expression.operator = operator;
+      if (value) expression.value = value as ExpressionValueTypeMap[ExpressionTypes.ARRAY];
+      return expression;
     }
   }
 }

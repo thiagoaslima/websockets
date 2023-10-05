@@ -31,3 +31,15 @@ export const isNil = (value: unknown): value is null | undefined =>
 /** Determines if a value is a nonempty string or not */
 export const isNonEmptyString = (value: unknown): value is string =>
   typeof value === 'string' && Boolean(value.trim().length);
+
+/** Determines if a value is a number or not */
+export const isNumber = (value: unknown): value is number =>
+  typeof value === 'number';
+
+/** Determines if a value is a boolean or not */
+export const isBool = (value: unknown): value is boolean =>
+  typeof value === 'boolean';
+
+/** Determines if a value is a Date or not */
+export const isDate = (value: unknown): value is Date =>
+  value instanceof Date;

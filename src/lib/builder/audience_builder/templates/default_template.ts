@@ -118,8 +118,10 @@ export class DefaultTemplate implements IBuilderTemplate {
         const filter = FilterNode.create({});
         const expression = createExpressionFromType(
           field.type as ExpressionTypes,
-          field.id,
-          field.display_name
+          {
+            field: field.id,
+            displayName: field.display_name
+          },
         );
         filter.addExpression(expression);
         filters.add(filter);
