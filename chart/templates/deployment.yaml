@@ -1,0 +1,111 @@
+{{- if not .Values.application.initializeCommand -}}
+apiVersion: {{ default "extensions/v1beta1" .Values.deploymentApiVersion }}
+kind: Deployment
+metadata:
+  name: {{ template "trackableappname" . }}
+  annotations:
+    {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
+    {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
+  labels:
+    app: {{ template "appname" . }}
+    track: "{{ .Values.application.track }}"
+    tier: "{{ .Values.application.tier }}"
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+{{- if or .Values.enableSelector (eq (default "extensions/v1beta1" .Values.deploymentApiVersion) "apps/v1") }}
+  selector:
+    matchLabels:
+      app: {{ template "appname" . }}
+      track: "{{ .Values.application.track }}"
+      tier: "{{ .Values.application.tier }}"
+      release: {{ .Release.Name }}
+{{- end }}
+  replicas: {{ .Values.replicaCount }}
+{{- if .Values.strategyType }}
+  strategy:
+    type: {{ .Values.strategyType | quote }}
+{{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/application-secrets: "{{ .Values.application.secretChecksum }}"
+        {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
+        {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
+{{- if .Values.podAnnotations }}
+{{ toYaml .Values.podAnnotations | indent 8 }}
+{{- end }}
+      labels:
+        app: {{ template "appname" . }}
+        track: "{{ .Values.application.track }}"
+        tier: "{{ .Values.application.tier }}"
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+{{ toYaml .Values.image.secrets | indent 10 }}
+      volumes:
+      - name: credentials
+        secret:
+          secretName: service-account
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ template "imagename" . }}
+        volumeMounts:
+          - name: credentials
+            mountPath: "/var/secrets/google"
+            readOnly: true
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+{{- if .Values.httpProbeEnabled }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.prefixURL }}
+            port: {{ .Values.probePort }}
+            scheme: {{ .Values.probeScheme }}
+          initialDelaySeconds: {{ .Values.readinessProbeInitialDelay }}
+          periodSeconds: {{ .Values.readinessProbePeriodSeconds }}
+          timeoutSeconds: {{ .Values.readinessProbeTimeout }}
+          failureThreshold: {{ .Values.readinessProbeFailureThreshold }}
+          successThreshold: {{ .Values.readinessProbeSuccessThreshold }}
+{{- end }}
+        {{- if .Values.application.secretName }}
+        envFrom:
+        - secretRef:
+            name: {{ .Values.application.secretName }}
+        {{- end }}
+        env:
+        - name: PROJECT_ID
+          value: {{ .Values.application.project_id }}
+        - name: NEW_RELIC_LICENSE_KEY
+          value: {{ .Values.application.new_relic_license_key }}
+        - name: CLIENT_NAME
+          value: {{ .Values.application.client_name }}
+{{- if .Values.postgresql.managed }}
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: app-postgres
+              key: username
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-postgres
+              key: password
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: app-postgres
+              key: privateIP
+{{- end }}
+        - name: DATABASE_URL
+          value: {{ .Values.application.database_url | quote }}
+        - name: GITLAB_ENVIRONMENT_NAME
+          value: {{ .Values.gitlab.envName | quote }}
+        - name: GITLAB_ENVIRONMENT_URL
+          value: {{ .Values.gitlab.envURL | quote }}
+        ports:
+        - name: "{{ .Values.service.name }}"
+          containerPort: {{ .Values.service.internalPort }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}
+{{- end -}}

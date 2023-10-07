@@ -1,0 +1,67 @@
+# yamllint disable rule:line-length
+---
+.auto-deploy:
+  image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-deploy-image:v2.0.0"
+  dependencies: []
+
+stages:
+  - deploy
+
+.production: &production_template
+  extends: .auto-deploy
+  script:
+    - export KUBE_CONTEXT=$CURRENT_KUBE_CONTEXT
+    - kubectl config use-context "$KUBE_CONTEXT"
+    - kubectl config get-contexts
+    - auto-deploy check_kube_domain
+    - auto-deploy ensure_namespace
+    - echo $CREDENTIALS_JSON > ${HOME}/credentials.json
+    - kubectl create secret generic ${SECRET_NAME} -n ${KUBE_NAMESPACE} --from-file=${HOME}/credentials.json -o yaml --dry-run | kubectl replace -n ${KUBE_NAMESPACE} --force -f -
+    - auto-deploy create_secret
+    - auto-deploy deploy
+
+{% for client in clients %}
+deploy_{{ client.get("name") }}:
+  stage: deploy
+  retry: 2
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: generate-deploy-config
+      artifacts: true
+  <<: *production_template
+  {% if client.get("name") != "dev" %}
+  only:
+    - main
+  {% endif %}
+  environment:
+    name: {{ client.get("env_scope") }}
+    url: http://builder-service.$KUBE_INGRESS_BASE_DOMAIN
+  variables:
+    CURRENT_KUBE_CONTEXT: flywheelsoftware/kubernetes-agents:{{ client.get("env_scope") }}
+    KUBE_NAMESPACE: builder-service
+    GOOGLE_APPLICATION_CREDENTIALS: '/var/secrets/google/credentials.json'
+    KUBE_INGRESS_BASE_DOMAIN: "int.{{ client.get("domain_slug") }}.flywheelproducts.com"
+    HELM_RELEASE_NAME: builder-service
+    ROLLOUT_RESOURCE_TYPE: deployment
+    HELM_UPGRADE_VALUES_FILE: ./.gitlab/values-{{ client.get("name") }}.yaml
+    HELM_UPGRADE_EXTRA_ARGS: "--timeout 10m"
+    K8S_SECRET_HOST_GCP_PROJECT: "{{ client.get("project_id") }}"
+    AUTO_DEVOPS_DEPLOY_DEBUG: "true"
+    SECRET_NAME: service-account
+    K8S_SECRET_ENABLE_METRICS: "true"
+    CREDENTIALS_JSON: {{ "${" }}{{ client.get("api_key_name") }}{{ "}" }}
+    K8S_SECRET_PLATFORM: "{{ client.get("platform") }}"
+    REPLICAS: 2
+    {% if client.get("platform") == 'aws' %}
+    K8S_SECRET_AWS_DEFAULT_REGION: "us-east-1"
+    K8S_SECRET_AWS_ACCESS_KEY_ID: {{ "${" }}{{ client.get("name").upper() }}_AWS_SECRET_ID{{ "}" }}
+    K8S_SECRET_AWS_SECRET_ACCESS_KEY: {{ "${" }}{{ client.get("name").upper() }}_AWS_SECRET_KEY{{ "}" }}
+    K8S_SECRET_GOOGLE_APPLICATION_CREDENTIALS: "/var/secrets/google/credentials.json"
+    K8S_SECRET_AWS_REGION: {{ client.get("aws_region") }}
+    K8S_SECRET_AWS_DEFAULT_REGION: {{ client.get("aws_region") }}
+    {% endif %}
+  {% if client.get("name") != "dev" %}
+  when:
+    manual
+  {% endif %}
+{% endfor %}
