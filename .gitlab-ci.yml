@@ -47,6 +47,23 @@ lint-job:
     - npm run lint
     - echo "Linting complete."
 
+prepare-tests:
+  stage: prepare-tests
+  script:
+    - echo "Installing local dependencies..." 
+    - npm ci
+  artifacts:
+    when: always
+    paths:
+      - node_modules/
+
+
+run-tests:
+  stage: run-tests
+  script:
+    - echo "Running tests..." 
+    - npm run test
+
 build:
   stage: build
   image: "registry.gitlab.com/gitlab-org/cluster-integration/auto-build-image:latest"

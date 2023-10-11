@@ -20,6 +20,20 @@ $ npm install
 $ npm run dev
 ```
 
+### Testing
+
+You should really be doing TDD, and we have this service setup for that.
+
+To run tests once, execute the following:
+```sh
+$ npm run test
+```
+
+But to have tests automatically reload as you write them, run this:
+```sh
+$ npm run test:watch
+```
+
 ## Build
 
 To build the service for production, do the following:

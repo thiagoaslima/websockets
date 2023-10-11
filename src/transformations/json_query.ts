@@ -58,8 +58,6 @@ export async function insertIntoDefaultSection(
     await insertNode(builder, node, targetIdx);
     previousNode = node;
   }
-
-  console.log('section node index', section.index);
 }
 
 /**
