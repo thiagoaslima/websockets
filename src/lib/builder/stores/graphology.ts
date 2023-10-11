@@ -13,7 +13,6 @@ import {ClassType} from '../../../types/classes.js';
 import {Result, ResultOk, ResultErr} from '../../result.js';
 import Graph from 'graphology';
 import {bfs} from 'graphology-traversal';
-// eslint-disable-next-line
 import {GraphOptions, SerializedGraph} from 'graphology-types';
 import {isPlainObject, isString} from '../../../utils/predicates.js';
 import {hasProperty} from '../../../utils/objects.js';

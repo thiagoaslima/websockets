@@ -13,6 +13,7 @@ import {
   queryFieldToFilterNode,
 } from '../utils/json_query.js';
 import {IBuilderNode} from '../types/builder.js';
+import {SectionNode} from '../lib/builder/audience_builder/nodes/section.js';
 
 export type DefaultTemplateSection =
   | AudienceBuilderNodeTypes.AUDIENCE
@@ -30,10 +31,22 @@ export async function insertIntoDefaultSection(
   defaultSection: DefaultTemplateSection,
   nodes: IBuilderNode[]
 ): Promise<void> {
-  const section =
-    defaultSection === AudienceBuilderNodeTypes.FLEX
-      ? builder.primarySection!
-      : defaultTemplate.sections.get(defaultSection);
+  const section = builder.findNode(node => {
+    switch (defaultSection) {
+      case AudienceBuilderNodeTypes.FLEX: {
+        return (
+          node instanceof SectionNode &&
+          node.defaultNodeType === AudienceBuilderNodeTypes.FLEX
+        );
+      }
+
+      default: {
+        return (
+          node instanceof SectionNode && node.defaultNodeType === defaultSection
+        );
+      }
+    }
+  });
 
   if (!section) throw Error('Invalid section type.');
 
@@ -45,6 +58,8 @@ export async function insertIntoDefaultSection(
     await insertNode(builder, node, targetIdx);
     previousNode = node;
   }
+
+  console.log('section node index', section.index);
 }
 
 /**
@@ -60,7 +75,7 @@ export async function transform(data: string, schema: FullSchemaResponse) {
 
   // Set default template
   builder.setTemplates({default: defaultTemplate});
-  builder.useTemplate('default');
+  await builder.useTemplate('default');
 
   const queries = jsonQuery.queries;
   const nodeFilters = queries['base_query']['filter'];

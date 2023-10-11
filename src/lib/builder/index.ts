@@ -28,6 +28,7 @@ import {BuilderEdge, EdgeEventTags, EdgeUpdatePayload} from './edge.js';
 import {BuilderNode, NodeEventTags, NodeUpdatePayload} from './node.js';
 import {createEdgeId} from '../../utils/builder.js';
 import {BuilderCache} from './cache.js';
+import {Nullable} from '../../types/utilities.js';
 
 export type BuilderConstructorArgs = {
   key: string;
@@ -655,6 +656,18 @@ export class Builder implements IBuilder {
     );
     const message = ChannelMessage.fromTags([tag]);
     this.emit(message);
+  }
+
+  /**
+   * Find a node given a predicate.
+   */
+  findNode(predicate: (node: IBuilderNode) => boolean): Nullable<IBuilderNode> {
+    return (
+      this.store.traverse((node: IBuilderNode) => {
+        if (predicate(node)) return node;
+        return null;
+      }) ?? null
+    );
   }
 
   initializeGraph<T extends SerializedGraph = SerializedGraph>(graph: T): void {
