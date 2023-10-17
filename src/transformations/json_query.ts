@@ -72,7 +72,7 @@ export async function transform(data: string, schema: FullSchemaResponse) {
   await builder.createPrimarySection();
 
   // Set default template
-  builder.setTemplates({default: defaultTemplate});
+  builder.setTemplates({default: defaultTemplate()});
   await builder.useTemplate('default');
 
   const queries = jsonQuery.queries;

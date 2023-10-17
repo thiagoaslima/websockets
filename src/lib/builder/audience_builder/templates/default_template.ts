@@ -39,7 +39,7 @@ const subtitleContentMap = new Map([
 ]);
 
 export class DefaultTemplate implements IBuilderTemplate {
-  get sections(): Map<AudienceBuilderNodeTypes, SectionNode> {
+  sections(): Map<AudienceBuilderNodeTypes, SectionNode> {
     return new Map([
       [
         AudienceBuilderNodeTypes.AUDIENCE,
@@ -58,7 +58,7 @@ export class DefaultTemplate implements IBuilderTemplate {
     ]);
   }
 
-  get sectionCallbacks(): Map<
+  sectionCallbacks(): Map<
     AudienceBuilderNodeTypes,
     (b: AudienceBuilder, s: SectionNode) => void
   > {
@@ -152,20 +152,20 @@ export class DefaultTemplate implements IBuilderTemplate {
       );
 
       // Insert section, if necessary.
-      const section = this.sections.get(type);
+      const section = this.sections().get(type);
       if (section) {
         // Execute section callback, if it exists.
         await insertNode(builder, section, builder.primarySection.index);
         await Promise.resolve(
-          this.sectionCallbacks.get(type)?.(builder, section)
+          this.sectionCallbacks().get(type)?.(builder, section)
         );
       }
 
       if (type === AudienceBuilderNodeTypes.FLEX) {
-        this.sectionCallbacks.get(type)?.(builder, builder.primarySection);
+        this.sectionCallbacks().get(type)?.(builder, builder.primarySection);
       }
     }
   }
 }
 
-export const defaultTemplate = new DefaultTemplate();
+export const defaultTemplate = () => new DefaultTemplate();

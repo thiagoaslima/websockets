@@ -108,7 +108,7 @@ export class Builder implements IBuilder {
   readonly store: IBuilderStore;
   readonly channel: IChannel;
 
-  cache = new BuilderCache();
+  cache: BuilderCache;
   history: IBuilderVersion[] = [];
 
   protected templates: Map<string, IBuilderTemplate> = new Map();
@@ -118,7 +118,9 @@ export class Builder implements IBuilder {
     this.key = key;
     this.store = store;
     this.channel = channel;
+    this.cache = new BuilderCache();
   }
+
   protected onEdgeChange(message: IChannelMessage): void {
     for (const tag of message.tags()) {
       switch (tag.key()) {

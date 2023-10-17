@@ -11,16 +11,9 @@ import {Builder} from '../lib/builder/index.js';
 import {Dataset} from '../types/datasets.js';
 import {SectionNode} from '../lib/builder/audience_builder/nodes/section.js';
 import {pushNode} from '../utils/nodes.js';
+import {v4} from 'uuid';
 
 export const AUDIENCE_BUILDER_KEY = 'ab';
-
-const channel = Channel.create('ab:internal');
-const config: GraphologyConfig = {
-  nodeClassMap: audienceBuilderNodeMap,
-  edgeClassMap: audienceBuilderEdgeMap,
-};
-
-const store = GraphologyStore.create({config});
 
 export class AudienceBuilder extends Builder {
   datasets: Dataset[] = [];
@@ -43,9 +36,20 @@ export class AudienceBuilder extends Builder {
 }
 
 /** Module instance of the AUdience Builder. */
-export const createAudienceBuilder = () =>
-  new AudienceBuilder({
-    key: AUDIENCE_BUILDER_KEY,
+export const createAudienceBuilder = () => {
+  const key = AUDIENCE_BUILDER_KEY + v4();
+  const channel = Channel.create(`${key}:internal`);
+
+  const config: GraphologyConfig = {
+    nodeClassMap: audienceBuilderNodeMap,
+    edgeClassMap: audienceBuilderEdgeMap,
+  };
+
+  const store = GraphologyStore.create({config});
+
+  return new AudienceBuilder({
+    key,
     store,
     channel,
   });
+};

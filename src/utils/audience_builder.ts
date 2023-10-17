@@ -199,13 +199,13 @@ export function isStem(node: IBuilderNode): node is StemNode {
 
 function isValidExpression(x: unknown): x is IFilterExpression['value'] {
   if (!Array.isArray(x)) return false;
-  return x.length === 1 && x.every(v => v === null);
+  return x.length > 0 || x.every(v => v === null);
 }
 
 /** Determines whether or not a given value is a valid StringExpression value. */
 export function isStringValue(x: unknown): x is IStringExpression['value'] {
   if (!isValidExpression(x)) return false;
-  return x.every(isString);
+  return x.every(v => Array.isArray(v) && v.every(y => isString(y)));
 }
 
 /** Determines whether or not a given value is a valid NumberExpression value. */

@@ -14,7 +14,7 @@ export type FieldSchema = {
   name: string;
   description?: string;
   fw_type?: string;
-  type: string;
+  source_type: string;
 };
 
 export type FullSchemaResponse = {

@@ -25,7 +25,7 @@ export function isAudienceBuilderNode(
 
 export function defaultOperatorForType(
   type: AudienceBuilderNodeTypes
-): NeighborOperators | undefined {
+): NeighborOperators | void {
   switch (type) {
     case AudienceBuilderNodeTypes.FLEX:
     case AudienceBuilderNodeTypes.STEM:
@@ -66,45 +66,55 @@ export async function putNeighborNode(
   node: IBuilderNode,
   params: AudienceBuilderMutationParams = DEFAULT_MUTATION_PARAMS
 ): Promise<void> {
-  try {
-    await builder.putNode(node, {runInsightsRequest: false});
-    const neighbors = await getTargetNeighbors(builder, node);
+  await builder.putNode(node, {runInsightsRequest: false});
+  const neighbors = await getTargetNeighbors(builder, node);
 
-    if (neighbors.left) {
-      const edge = NeighborEdge.create(neighbors.left, node.id, builder);
-      const neighbor = builder.getNodeFromCache(neighbors.left);
-      if (!neighbor) throw Error('Invalid node id within hierarchy');
-
-      if (isFilter(neighbor) && isFilter(node)) {
-        edge.operator =
-          params.operator ||
-          defaultOperatorForType(node.type as AudienceBuilderNodeTypes);
-      }
-
-      await builder.putEdge(edge);
+  if (neighbors.left) {
+    const edge = NeighborEdge.create(neighbors.left, node.id, builder);
+    const neighbor = builder.getNodeFromCache(neighbors.left);
+    if (!neighbor) {
+      throw Error(
+        `Neighbor left: Invalid node id within hierarchy; ${
+          neighbors.left
+        } ${typeof neighbor} ${Array.from(builder.cache.nodes.values())
+          .map(node => node.id)
+          .join('\n,\n ')}`
+      );
     }
 
-    if (neighbors.right) {
-      const edge = NeighborEdge.create(node.id, neighbors.right, builder);
-      const neighbor = builder.getNodeFromCache(neighbors.right);
-      if (!neighbor) throw Error('Invalid node id within hierarchy');
-
-      if (isFilter(neighbor) && isFilter(node)) {
-        edge.operator =
-          params.operator ||
-          defaultOperatorForType(neighbor.type as AudienceBuilderNodeTypes);
-      }
-
-      await builder.putEdge(edge);
+    if (isFilter(neighbor) && isFilter(node)) {
+      edge.operator =
+        params.operator ||
+        defaultOperatorForType(node.type as AudienceBuilderNodeTypes);
     }
 
-    await builder.putLevel(node.level, level => {
-      level.splice(node.index, 0, node.id);
-      return level;
-    });
-  } catch (err) {
-    console.error(err);
+    await builder.putEdge(edge);
   }
+
+  if (neighbors.right) {
+    const edge = NeighborEdge.create(node.id, neighbors.right, builder);
+    const neighbor = builder.getNodeFromCache(neighbors.right);
+    if (!neighbor) {
+      throw Error(
+        `Neighbor right: Invalid node id within hierarchy; ${
+          neighbors.left
+        } ${typeof neighbor}`
+      );
+    }
+
+    if (isFilter(neighbor) && isFilter(node)) {
+      edge.operator =
+        params.operator ||
+        defaultOperatorForType(neighbor.type as AudienceBuilderNodeTypes);
+    }
+
+    await builder.putEdge(edge);
+  }
+
+  await builder.putLevel(node.level, level => {
+    level.splice(node.index, 0, node.id);
+    return level;
+  });
 }
 
 export async function insertNode(
@@ -113,20 +123,16 @@ export async function insertNode(
   index: number,
   params: AudienceBuilderMutationParams = DEFAULT_MUTATION_PARAMS
 ): Promise<void> {
-  try {
-    node.index = index;
-    await putNeighborNode(builder, node, params);
+  node.index = index;
+  await putNeighborNode(builder, node, params);
 
-    const isValidChild =
-      node.level === LAYER_ROOT_KEY ||
-      (await builder.hasEdge(node.level, node.id, BuilderEdgeTypes.CHILD));
+  const isValidChild =
+    node.level === LAYER_ROOT_KEY ||
+    (await builder.hasEdge(node.level, node.id, BuilderEdgeTypes.CHILD));
 
-    if (!isValidChild) {
-      const edge = ChildEdge.create(node.level, node.id, builder);
-      await builder.putEdge(edge);
-    }
-  } catch (err) {
-    console.error(err);
+  if (!isValidChild) {
+    const edge = ChildEdge.create(node.level, node.id, builder);
+    await builder.putEdge(edge);
   }
 }
 
