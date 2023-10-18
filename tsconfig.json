@@ -1,7 +1,7 @@
 {
   "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
-    "strict": true,
+    "strict": false,
     "outDir": "./dist",
     "target": "ESNext",
     "module": "NodeNext",

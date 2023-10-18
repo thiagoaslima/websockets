@@ -28,6 +28,7 @@
     "@swc/helpers": "^0.5.2",
     "@types/node": "^20.6.2",
     "@types/uuid": "^9.0.4",
+    "@types/ws": "^8.5.7",
     "ava": "^5.3.1",
     "eslint": "^8.50.0",
     "esmock": "^2.5.2",
@@ -44,7 +45,9 @@
     "graphology-traversal": "^0.3.1",
     "gts": "^5.1.1",
     "rxjs": "^7.8.1",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "ws": "^8.14.2",
+    "y-websocket": "^1.5.0"
   },
   "ava": {
     "extensions": {
