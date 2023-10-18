@@ -257,7 +257,8 @@ export function setupWSConnection(
   {docName = req.url.slice(1).split('?')[0], gc = true}: any = {}
 ) {
   console.log(docName);
-  conn.binaryType = 'arraybuffer';
+  conn.binaryType = 'nodebuffer';
+
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc);
   doc.conns.set(conn, new Set());
