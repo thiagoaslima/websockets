@@ -9,9 +9,9 @@ const CALLBACK_OBJECTS = process.env.CALLBACK_OBJECTS
   ? JSON.parse(process.env.CALLBACK_OBJECTS)
   : {};
 
-exports.isCallbackSet = !!CALLBACK_URL;
+export const isCallbackSet = !!CALLBACK_URL;
 
-exports.callbackHandler = (
+export const callbackHandler = (
   update: Uint8Array,
   origin: any,
   doc: WSSharedDoc
@@ -32,7 +32,7 @@ exports.callbackHandler = (
   callbackRequest(CALLBACK_URL, Number(CALLBACK_TIMEOUT), dataToSend);
 };
 
-const callbackRequest = (url: URL, timeout: number, _data: object) => {
+export const callbackRequest = (url: URL, timeout: number, _data: object) => {
   const data = JSON.stringify(_data);
   const options = {
     hostname: url.hostname,
@@ -63,7 +63,12 @@ const callbackRequest = (url: URL, timeout: number, _data: object) => {
  * @param {string} objType
  * @param {WSSharedDoc} doc
  */
-const getContent = (objName: string, objType: string, doc: WSSharedDoc) => {
+
+const getContent = (
+  objName: string,
+  objType: string,
+  doc: WSSharedDoc
+): any => {
   switch (objType) {
     case 'Array':
       return doc.getArray(objName);

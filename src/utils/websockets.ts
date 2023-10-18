@@ -2,13 +2,11 @@
 
 import * as Y from 'yjs';
 import * as syncProtocol from 'y-protocols/sync.js';
-import * as awarenessProtocol from 'y-protocols/awareness.js'
+import * as awarenessProtocol from 'y-protocols/awareness.js';
 import * as encoding from 'lib0/encoding.js';
 import * as decoding from 'lib0/decoding.js';
 import * as map from 'lib0/map';
-
-const callbackHandler = require('./callback.ts').callbackHandler;
-const isCallbackSet = require('./callback.ts').isCallbackSet;
+import {callbackHandler, isCallbackSet, callbackRequest} from './callback.js';
 
 const CALLBACK_DEBOUNCE_WAIT = 2000;
 const CALLBACK_DEBOUNCE_MAXWAIT = 10000;
@@ -22,7 +20,7 @@ const wsReadyStateClosed = 3; // eslint-disable-line
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0';
 const persistenceDir = process.env.YPERSISTENCE;
 
-let persistence = null;
+const persistence = null;
 
 /*
 if (typeof persistenceDir === 'string') {
@@ -135,10 +133,7 @@ export class WSSharedDoc extends Y.Doc {
     this.on('update', updateHandler);
 
     if (isCallbackSet) {
-      this.on(
-        'update',
-        callbackHandler,
-      );
+      this.on('update', callbackHandler);
     }
   }
 }
@@ -163,7 +158,11 @@ export const getYDoc = (docname: string, gc = true): WSSharedDoc => {
  * @param {WSSharedDoc} doc
  * @param {Uint8Array} message
  */
-export const messageListener = (conn: any, doc: WSSharedDoc, message: Uint8Array) => {
+export const messageListener = (
+  conn: any,
+  doc: WSSharedDoc,
+  message: Uint8Array
+) => {
   try {
     const encoder = encoding.createEncoder();
     const decoder = decoding.createDecoder(message);
@@ -232,12 +231,9 @@ const send = (doc: WSSharedDoc, conn: any, m: Uint8Array) => {
     closeConn(doc, conn);
   }
   try {
-    conn.send(
-      m,
-      (err: Error) => {
-        err != null && closeConn(doc, conn);
-      }
-    );
+    conn.send(m, (err: Error) => {
+      err != null && closeConn(doc, conn);
+    });
   } catch (e) {
     closeConn(doc, conn);
   }
@@ -260,10 +256,8 @@ export function setupWSConnection(
   const doc = getYDoc(docName, gc);
   doc.conns.set(conn, new Set());
   // listen and reply to events
-  conn.on(
-    'message',
-    (message: ArrayBuffer) =>
-      messageListener(conn, doc, new Uint8Array(message))
+  conn.on('message', (message: ArrayBuffer) =>
+    messageListener(conn, doc, new Uint8Array(message))
   );
 
   // Check if connection is still alive
