@@ -1,4 +1,5 @@
-const http = require('http');
+import http from 'http';
+import type {WSSharedDoc} from './websockets.js';
 
 const CALLBACK_URL = process.env.CALLBACK_URL
   ? new URL(process.env.CALLBACK_URL)
@@ -10,12 +11,11 @@ const CALLBACK_OBJECTS = process.env.CALLBACK_OBJECTS
 
 exports.isCallbackSet = !!CALLBACK_URL;
 
-/**
- * @param {Uint8Array} update
- * @param {any} origin
- * @param {WSSharedDoc} doc
- */
-exports.callbackHandler = (update, origin, doc) => {
+exports.callbackHandler = (
+  update: Uint8Array,
+  origin: any,
+  doc: WSSharedDoc
+) => {
   const room = doc.name;
   const dataToSend = {
     room,
@@ -29,16 +29,11 @@ exports.callbackHandler = (update, origin, doc) => {
       content: getContent(sharedObjectName, sharedObjectType, doc).toJSON(),
     };
   });
-  callbackRequest(CALLBACK_URL, CALLBACK_TIMEOUT, dataToSend);
+  callbackRequest(CALLBACK_URL, Number(CALLBACK_TIMEOUT), dataToSend);
 };
 
-/**
- * @param {URL} url
- * @param {number} timeout
- * @param {Object} data
- */
-const callbackRequest = (url, timeout, data) => {
-  data = JSON.stringify(data);
+const callbackRequest = (url: URL, timeout: number, _data: object) => {
+  const data = JSON.stringify(_data);
   const options = {
     hostname: url.hostname,
     port: url.port,
@@ -68,7 +63,7 @@ const callbackRequest = (url, timeout, data) => {
  * @param {string} objType
  * @param {WSSharedDoc} doc
  */
-const getContent = (objName, objType, doc) => {
+const getContent = (objName: string, objType: string, doc: WSSharedDoc) => {
   switch (objType) {
     case 'Array':
       return doc.getArray(objName);
@@ -78,8 +73,10 @@ const getContent = (objName, objType, doc) => {
       return doc.getText(objName);
     case 'XmlFragment':
       return doc.getXmlFragment(objName);
+    /*
     case 'XmlElement':
       return doc.getXmlElement(objName);
+    */
     default:
       return {};
   }

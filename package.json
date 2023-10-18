@@ -47,9 +47,11 @@
     "graphology": "^0.25.4",
     "graphology-traversal": "^0.3.1",
     "gts": "^5.1.1",
+    "lib0": "^0.2.87",
     "rxjs": "^7.8.1",
     "uuid": "^9.0.1",
     "ws": "^8.14.2",
+    "y-protocols": "^1.0.6",
     "y-websocket": "^1.5.0"
   },
   "ava": {

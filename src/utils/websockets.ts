@@ -1,14 +1,11 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 import * as Y from 'yjs';
-const syncProtocol = require('y-protocols/dist/sync.cjs');
-const awarenessProtocol = require('y-protocols/dist/awareness.cjs');
-
-const encoding = require('lib0/dist/encoding.cjs');
-const decoding = require('lib0/dist/decoding.cjs');
-const map = require('lib0/dist/map.cjs');
-
-const debounce = require('lodash.debounce');
+import * as syncProtocol from 'y-protocols/sync.js';
+import * as awarenessProtocol from 'y-protocols/awareness.js'
+import * as encoding from 'lib0/encoding.js';
+import * as decoding from 'lib0/decoding.js';
+import * as map from 'lib0/map';
 
 const callbackHandler = require('./callback.ts').callbackHandler;
 const isCallbackSet = require('./callback.ts').isCallbackSet;
@@ -24,10 +21,10 @@ const wsReadyStateClosed = 3; // eslint-disable-line
 // disable gc when using snapshots!
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0';
 const persistenceDir = process.env.YPERSISTENCE;
-/**
- * @type {{bindState: function(string,WSSharedDoc):void, writeState:function(string,WSSharedDoc):Promise<any>, provider: any}|null}
- */
+
 let persistence = null;
+
+/*
 if (typeof persistenceDir === 'string') {
   console.info('Persisting documents to "' + persistenceDir + '"');
   // @ts-ignore
@@ -46,39 +43,25 @@ if (typeof persistenceDir === 'string') {
     },
     writeState: async (docName, ydoc) => {},
   };
-}
+}*/
 
-/**
- * @param {{bindState: function(string,WSSharedDoc):void,
- * writeState:function(string,WSSharedDoc):Promise<any>,provider:any}|null} persistence_
- */
+/*
 exports.setPersistence = persistence_ => {
   persistence = persistence_;
-};
+};*/
 
-/**
- * @return {null|{bindState: function(string,WSSharedDoc):void,
- * writeState:function(string,WSSharedDoc):Promise<any>}|null} used persistence layer
- */
-exports.getPersistence = () => persistence;
+export const getPersistence = () => persistence;
 
 /**
  * @type {Map<string,WSSharedDoc>}
  */
-const docs = new Map();
-// exporting docs so that others can use it
-exports.docs = docs;
+export const docs = new Map();
 
 const messageSync = 0;
 const messageAwareness = 1;
 // const messageAuth = 2
 
-/**
- * @param {Uint8Array} update
- * @param {any} origin
- * @param {WSSharedDoc} doc
- */
-const updateHandler = (update, origin, doc) => {
+const updateHandler = (update: Uint8Array, _, doc: WSSharedDoc) => {
   const encoder = encoding.createEncoder();
   encoding.writeVarUint(encoder, messageSync);
   syncProtocol.writeUpdate(encoder, update);
@@ -86,11 +69,14 @@ const updateHandler = (update, origin, doc) => {
   doc.conns.forEach((_, conn) => send(doc, conn, message));
 };
 
-class WSSharedDoc extends Y.Doc {
+export class WSSharedDoc extends Y.Doc {
+  conns: Map<object, Set<number>>;
+  awareness: awarenessProtocol.Awareness;
+
   /**
    * @param {string} name
    */
-  constructor(name) {
+  constructor(public name: string) {
     super({gc: gcEnabled});
     this.name = name;
     /**
@@ -107,7 +93,18 @@ class WSSharedDoc extends Y.Doc {
      * @param {{ added: Array<number>, updated: Array<number>, removed: Array<number> }} changes
      * @param {Object | null} conn Origin is the connection that made the change
      */
-    const awarenessChangeHandler = ({added, updated, removed}, conn) => {
+    const awarenessChangeHandler = (
+      {
+        added,
+        updated,
+        removed,
+      }: {
+        added: number[];
+        updated: number[];
+        removed: number[];
+      },
+      conn: object | null
+    ) => {
       const changedClients = added.concat(updated, removed);
       if (conn !== null) {
         const connControlledIDs =
@@ -134,13 +131,13 @@ class WSSharedDoc extends Y.Doc {
       });
     };
     this.awareness.on('update', awarenessChangeHandler);
+
     this.on('update', updateHandler);
+
     if (isCallbackSet) {
       this.on(
         'update',
-        debounce(callbackHandler, CALLBACK_DEBOUNCE_WAIT, {
-          maxWait: CALLBACK_DEBOUNCE_MAXWAIT,
-        })
+        callbackHandler,
       );
     }
   }
@@ -148,13 +145,9 @@ class WSSharedDoc extends Y.Doc {
 
 /**
  * Gets a Y.Doc by name, whether in memory or on disk
- *
- * @param {string} docname - the name of the Y.Doc to find or create
- * @param {boolean} gc - whether to allow gc on the doc (applies only when created)
- * @return {WSSharedDoc}
  */
-const getYDoc = (docname, gc = true) =>
-  map.setIfUndefined(docs, docname, () => {
+export const getYDoc = (docname: string, gc = true): WSSharedDoc => {
+  return map.setIfUndefined(docs, docname, () => {
     const doc = new WSSharedDoc(docname);
     doc.gc = gc;
     if (persistence !== null) {
@@ -163,15 +156,14 @@ const getYDoc = (docname, gc = true) =>
     docs.set(docname, doc);
     return doc;
   });
-
-exports.getYDoc = getYDoc;
+};
 
 /**
  * @param {any} conn
  * @param {WSSharedDoc} doc
  * @param {Uint8Array} message
  */
-const messageListener = (conn, doc, message) => {
+export const messageListener = (conn: any, doc: WSSharedDoc, message: Uint8Array) => {
   try {
     const encoder = encoding.createEncoder();
     const decoder = decoding.createDecoder(message);
@@ -207,13 +199,9 @@ const messageListener = (conn, doc, message) => {
  * @param {WSSharedDoc} doc
  * @param {any} conn
  */
-const closeConn = (doc, conn) => {
+const closeConn = (doc: WSSharedDoc, conn: any) => {
   if (doc.conns.has(conn)) {
-    /**
-     * @type {Set<number>}
-     */
-    // @ts-ignore
-    const controlledIds = doc.conns.get(conn);
+    const controlledIds = doc.conns.get(conn) as Set<number>;
     doc.conns.delete(conn);
     awarenessProtocol.removeAwarenessStates(
       doc.awareness,
@@ -236,7 +224,7 @@ const closeConn = (doc, conn) => {
  * @param {any} conn
  * @param {Uint8Array} m
  */
-const send = (doc, conn, m) => {
+const send = (doc: WSSharedDoc, conn: any, m: Uint8Array) => {
   if (
     conn.readyState !== wsReadyStateConnecting &&
     conn.readyState !== wsReadyStateOpen
@@ -246,7 +234,7 @@ const send = (doc, conn, m) => {
   try {
     conn.send(
       m,
-      /** @param {any} err */ err => {
+      (err: Error) => {
         err != null && closeConn(doc, conn);
       }
     );
@@ -263,9 +251,9 @@ const pingTimeout = 30000;
  * @param {any} opts
  */
 export function setupWSConnection(
-  conn,
-  req,
-  {docName = req.url.slice(1).split('?')[0], gc = true} = {}
+  conn: any,
+  req: any,
+  {docName = req.url.slice(1).split('?')[0], gc = true}: any = {}
 ) {
   conn.binaryType = 'arraybuffer';
   // get doc, initialize if it does not exist yet
@@ -274,7 +262,7 @@ export function setupWSConnection(
   // listen and reply to events
   conn.on(
     'message',
-    /** @param {ArrayBuffer} message */ message =>
+    (message: ArrayBuffer) =>
       messageListener(conn, doc, new Uint8Array(message))
   );
 
