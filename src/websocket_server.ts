@@ -1,16 +1,13 @@
-import WebSocket from 'ws';
-import fastify from 'fastify';
-import websocket from '@fastify/websocket';
-
-export function extendServerWithWebsocket(server: fastify.FastifyInstance) {
-  const host = 'localhost';
-  const port = 1234;
-  const wss = new WebSocket.Server({noServer: true});
-
-  server.register(websocket);
-
-  server.get('/ws', {websocket: true}, function wsHandler(connection, req) {
+import {FastifyInstance} from 'fastify';
+export function extendServerWithWebsocket(server: FastifyInstance) {
+  server.get('/ws', {websocket: true}, (connection, req) => {
     console.log('WebSocket connection initiated');
+
+    connection.socket.on('connection', message => {
+      console.log('Message received:', message.toString());
+      connection.socket.send('hi from server');
+    });
+
     connection.socket.on('message', message => {
       console.log('Message received:', message.toString());
       connection.socket.send('hi from server');
