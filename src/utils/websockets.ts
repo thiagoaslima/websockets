@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-const Y = require('yjs');
+import * as Y from 'yjs';
 const syncProtocol = require('y-protocols/dist/sync.cjs');
 const awarenessProtocol = require('y-protocols/dist/awareness.cjs');
 
@@ -10,16 +10,16 @@ const map = require('lib0/dist/map.cjs');
 
 const debounce = require('lodash.debounce');
 
-const callbackHandler = require('./callback.js').callbackHandler;
-const isCallbackSet = require('./callback.js').isCallbackSet;
+const callbackHandler = require('./callback.ts').callbackHandler;
+const isCallbackSet = require('./callback.ts').isCallbackSet;
 
 const CALLBACK_DEBOUNCE_WAIT = 2000;
 const CALLBACK_DEBOUNCE_MAXWAIT = 10000;
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
-const wsReadyStateClosing = 2 // eslint-disable-line
-const wsReadyStateClosed = 3 // eslint-disable-line
+const wsReadyStateClosing = 2; // eslint-disable-line
+const wsReadyStateClosed = 3; // eslint-disable-line
 
 // disable gc when using snapshots!
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0';

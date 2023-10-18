@@ -1,11 +1,14 @@
 import {FastifyInstance} from 'fastify';
+import {setupWSConnection} from './utils/websockets.js';
 export function extendServerWithWebsocket(server: FastifyInstance) {
   server.get('/ws', {websocket: true}, (connection, req) => {
     console.log('WebSocket connection initiated');
 
     connection.socket.on('connection', message => {
       console.log('Message received:', message.toString());
+
       connection.socket.send('hi from server');
+      setupWSConnection(connection.socket, message);
     });
 
     connection.socket.on('message', message => {

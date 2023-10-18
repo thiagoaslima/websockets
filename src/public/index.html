@@ -13,7 +13,6 @@
 
       // Connection established
       socket.addEventListener('open', event => {
-        debugger;
         console.log('WebSocket connection opened:', event);
         console.log('Sending a message to the server...');
         socket.send('Hello from the client!');
@@ -21,22 +20,18 @@
 
       // Listen for messages from the server
       socket.addEventListener('message', event => {
-        debugger;
         console.log('Message received from the server:', event.data);
       });
 
       // Listen for any errors
       socket.addEventListener('error', event => {
-        debugger;
         console.error('WebSocket Error:', event);
       });
 
       // Connection closed
       socket.addEventListener('close', event => {
-        debugger;
         console.log('WebSocket connection closed:', event);
       });
-
     </script>
   </body>
 </html>
