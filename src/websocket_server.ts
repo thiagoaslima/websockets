@@ -3,18 +3,19 @@ import {setupWSConnection} from './utils/websockets.js';
 export function extendServerWithWebsocket(server: FastifyInstance) {
   server.get('/ws/:room', {websocket: true}, (connection, req) => {
     console.log('WebSocket connection initiated');
+    setupWSConnection(connection.socket, req);
 
     connection.socket.on('connection', message => {
       console.log('Message received:', message.toString());
-
-      connection.socket.send('hi from server');
-      setupWSConnection(connection, message);
+      console.log('Connecting...');
+      setupWSConnection(connection.socket, req);
     });
-
+    
+    /*
     connection.socket.on('message', message => {
       console.log('Message received:', message.toString());
-      connection.socket.send('hi from server');
     });
+    */
 
     connection.socket.on('error', error => {
       console.error('WebSocket Error:', error);

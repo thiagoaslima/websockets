@@ -7,6 +7,7 @@ import * as encoding from 'lib0/encoding.js';
 import * as decoding from 'lib0/decoding.js';
 import * as map from 'lib0/map';
 import {callbackHandler, isCallbackSet, callbackRequest} from './callback.js';
+import WebSocket from 'ws';
 
 const CALLBACK_DEBOUNCE_WAIT = 2000;
 const CALLBACK_DEBOUNCE_MAXWAIT = 10000;
@@ -159,7 +160,7 @@ export const getYDoc = (docname: string, gc = true): WSSharedDoc => {
  * @param {Uint8Array} message
  */
 export const messageListener = (
-  conn: any,
+  conn: WebSocket,
   doc: WSSharedDoc,
   message: Uint8Array
 ) => {
@@ -167,16 +168,20 @@ export const messageListener = (
     const encoder = encoding.createEncoder();
     const decoder = decoding.createDecoder(message);
     const messageType = decoding.readVarUint(decoder);
+    console.log('messageType: ', messageType);
     switch (messageType) {
       case messageSync:
         encoding.writeVarUint(encoder, messageSync);
+        console.log('wrote...');
         syncProtocol.readSyncMessage(decoder, encoder, doc, conn);
+        console.log('read...');
 
         // If the `encoder` only contains the type of reply message and no
         // message, there is no need to send the message. When `encoder` only
         // contains the type of reply, its length is 1.
         if (encoding.length(encoder) > 1) {
           send(doc, conn, encoding.toUint8Array(encoder));
+          console.log('sent...');
         }
         break;
       case messageAwareness: {
@@ -247,18 +252,20 @@ const pingTimeout = 30000;
  * @param {any} opts
  */
 export function setupWSConnection(
-  conn: any,
+  conn: WebSocket,
   req: any,
   {docName = req.url.slice(1).split('?')[0], gc = true}: any = {}
 ) {
+  console.log(docName);
   conn.binaryType = 'arraybuffer';
   // get doc, initialize if it does not exist yet
   const doc = getYDoc(docName, gc);
   doc.conns.set(conn, new Set());
   // listen and reply to events
-  conn.on('message', (message: ArrayBuffer) =>
+  conn.on('message', (message: ArrayBuffer) => {
+    console.log('PARSING MESSAGE');
     messageListener(conn, doc, new Uint8Array(message))
-  );
+  });
 
   // Check if connection is still alive
   let pongReceived = true;
