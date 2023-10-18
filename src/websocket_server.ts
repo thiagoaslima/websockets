@@ -10,11 +10,27 @@ export function extendServerWithWebsocket(server: fastify.FastifyInstance) {
   server.register(websocket);
 
   server.get('/ws', {websocket: true}, function wsHandler(connection, req) {
-    // bound to fastify server
-
+    console.log('WebSocket connection initiated');
     connection.socket.on('message', message => {
-      // message.toString() === 'hi from client'
+      console.log('Message received:', message.toString());
       connection.socket.send('hi from server');
+    });
+
+    connection.socket.on('error', error => {
+      console.error('WebSocket Error:', error);
+    });
+
+    connection.socket.on('open', () => {
+      console.log('WebSocket Connection Established');
+    });
+
+    connection.socket.on('close', (code, reason) => {
+      console.log(
+        'WebSocket Connection Closed. Code:',
+        code,
+        'Reason:',
+        reason
+      );
     });
   });
 }
