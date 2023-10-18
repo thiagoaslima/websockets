@@ -38,9 +38,12 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@fastify/static": "^6.11.2",
     "@fastify/type-provider-typebox": "^3.5.0",
+    "@fastify/websocket": "^8.2.0",
     "@sinclair/typebox": "^0.31.15",
     "fastify": "^4.23.2",
+    "fastify-websocket": "^4.3.0",
     "graphology": "^0.25.4",
     "graphology-traversal": "^0.3.1",
     "gts": "^5.1.1",

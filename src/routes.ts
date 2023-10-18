@@ -20,6 +20,8 @@ export default function (
   /** Root route */
   app.get<{Reply: HelloWorldType}>(
     '/',
+    (req, reply) => reply.sendFile('index.html')
+    /**
     {
       schema: {
         response: {
@@ -28,6 +30,7 @@ export default function (
       },
     },
     helloWorld
+    **/
   );
 
   app.post<{Body: JsonQueryType; Reply: JsonQueryResponseType}>(
