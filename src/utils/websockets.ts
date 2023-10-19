@@ -32,20 +32,19 @@ if (typeof persistenceDir === 'string') {
     bindState: async (docName, ydoc) => {
       const persistedYdoc = await ldb.getYDoc(docName);
       const newUpdates = Y.encodeStateAsUpdate(ydoc);
-      ldb.storeUpdate(docName, newUpdates);
+      await ldb.storeUpdate(docName, newUpdates);
       Y.applyUpdate(ydoc, Y.encodeStateAsUpdate(persistedYdoc));
-      ydoc.on('update', update => {
-        ldb.storeUpdate(docName, update);
+      ydoc.on('update', async update => {
+        await ldb.storeUpdate(docName, update);
       });
     },
     writeState: async (docName, ydoc) => {},
   };
 }
 
-/*
-exports.setPersistence = persistence_ => {
+export const setPersistence = persistence_ => {
   persistence = persistence_;
-};*/
+};
 
 export const getPersistence = () => persistence;
 
