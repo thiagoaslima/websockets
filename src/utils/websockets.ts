@@ -6,6 +6,7 @@ import * as awarenessProtocol from 'y-protocols/awareness.js';
 import * as encoding from 'lib0/encoding.js';
 import * as decoding from 'lib0/decoding.js';
 import * as map from 'lib0/map';
+import {LeveldbPersistence} from 'y-leveldb';
 import {callbackHandler, isCallbackSet, callbackRequest} from './callback.js';
 import WebSocket from 'ws';
 
@@ -19,15 +20,12 @@ const wsReadyStateClosed = 3; // eslint-disable-line
 
 // disable gc when using snapshots!
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0';
-const persistenceDir = process.env.YPERSISTENCE;
+const persistenceDir = 'persistenceDB';
 
-const persistence = null;
+let persistence = null;
 
-/*
 if (typeof persistenceDir === 'string') {
   console.info('Persisting documents to "' + persistenceDir + '"');
-  // @ts-ignore
-  const LeveldbPersistence = require('y-leveldb').LeveldbPersistence;
   const ldb = new LeveldbPersistence(persistenceDir);
   persistence = {
     provider: ldb,
@@ -42,7 +40,7 @@ if (typeof persistenceDir === 'string') {
     },
     writeState: async (docName, ydoc) => {},
   };
-}*/
+}
 
 /*
 exports.setPersistence = persistence_ => {
