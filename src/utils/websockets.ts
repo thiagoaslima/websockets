@@ -20,7 +20,7 @@ const wsReadyStateClosed = 3; // eslint-disable-line
 
 // disable gc when using snapshots!
 const gcEnabled = process.env.GC !== 'false' && process.env.GC !== '0';
-const persistenceDir = 'persistenceDB';
+const persistenceDir = './storage-location';
 
 let persistence = null;
 
