@@ -1,7 +1,7 @@
 import fastify from 'fastify';
 import websocket from '@fastify/websocket';
 import fastifyStatic from '@fastify/static';
-import fastifyCors from 'fastify-cors';
+import fastifyCors from '@fastify/cors';
 
 import routes from './routes.js';
 import type {TypeBoxTypeProvider} from '@fastify/type-provider-typebox';
