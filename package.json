@@ -42,6 +42,7 @@
     "@fastify/websocket": "^8.2.0",
     "@sinclair/typebox": "^0.31.15",
     "fastify": "^4.23.2",
+    "fastify-cors": "^6.1.0",
     "fastify-websocket": "^4.3.0",
     "gts": "^5.1.1",
     "lib0": "^0.2.87",
