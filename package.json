@@ -7,7 +7,7 @@
   "scripts": {
     "test": "NODE_OPTIONS='--no-warnings=ExperimentalWarning --loader=ts-node/esm' ava ./src/**/*.test.ts",
     "test:watch": "NODE_OPTIONS='--loader=ts-node/esm' ava --watch ./src/**/*.test.ts",
-    "build": "swc ./src -d dist",
+    "build": "swc ./src -d dist && cp -r ./src/static ./dist/",
     "start": "node dist/index.js",
     "lint": "eslint .",
     "clean": "gts clean",
