@@ -9,8 +9,8 @@
     <h1>Weegee</h1>
 
     <script>
-      const host = window.location.host;
-      const socket = new WebSocket(`ws://${host}:1337/ws`);
+      const {host} = window.location;
+      const socket = new WebSocket(`ws://${host}/ws`);
 
       // Connection established
       socket.addEventListener('open', event => {
