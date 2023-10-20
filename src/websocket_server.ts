@@ -1,7 +1,6 @@
 import {FastifyInstance} from 'fastify';
 import {setupWSConnection} from './utils/websockets.js';
-import { error } from 'console';
-import { request } from 'http';
+
 export function extendServerWithWebsocket(server: FastifyInstance) {
   server.setErrorHandler((error, req, reply) => {
     console.error(error);
