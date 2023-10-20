@@ -11,7 +11,7 @@ export const server = fastify({
 }).withTypeProvider<TypeBoxTypeProvider>();
 
 server.register(fastifyStatic, {
-  root: path.resolve('./src/public'),
+  root: path.resolve('./public'),
 });
 
 await server.register(websocket);
